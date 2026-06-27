@@ -185,6 +185,11 @@ const ASSET_PATHS = {
   BGM: 'src/assets/static/bgm/'
 };
 
+const BGM_URLS = {
+  '01': 'https://cnb.cool/ciallo.ciallo/senrenbanka/-/releases/download/resources/BGM01.wav',
+  '05': 'https://cnb.cool/ciallo.ciallo/senrenbanka/-/releases/download/resources/BGM05.wav',
+};
+
 const FUNCTION_TIP_TEXTS = [
   '固定 / 解除', '自定义', '保存', '加载', '快速保存',
   '快速加载', '系统', '上一分支', '前移场景', '快退',
@@ -826,8 +831,9 @@ const handleBGM = (musicId) => {
   
   // 播放新的BGM
   if (musicId) {
-    console.log('Playing new BGM:', ASSET_PATHS.BGM + 'BGM' + musicId + '.wav');
-    eventBus.$emit('set-bgm', ASSET_PATHS.BGM + 'BGM' + musicId + '.wav');
+    const bgmUrl = BGM_URLS[musicId] || (ASSET_PATHS.BGM + 'BGM' + musicId + '.wav');
+    console.log('Playing new BGM:', bgmUrl);
+    eventBus.$emit('set-bgm', bgmUrl);
   }
 };
 

@@ -4,7 +4,7 @@
         <div id="opApp" v-if="GlobeTransmitItems[0].isOpShow">
             <div id="op" v-if="op_show">
                 <!-- 视频容器 -->
-                <video v-if="op_play" src="../assets/static/index/OP.mp4" autoplay muted></video>
+                <video v-if="op_play" src="https://cnb.cool/ciallo.ciallo/senrenbanka/-/releases/download/resources/OP.mp4" autoplay muted></video>
                 <div class="overlay" @click="toggle" :class="{ 'animate-fade2': isAnimating2 }"></div>
             </div>
             <!-- 遮罩层动画容器 -->
