@@ -62,9 +62,11 @@ import { useRouter } from 'vue-router';
 import eventBus from '../components/event-bus.js';
 import { useDataStore } from '../components/dataStore.js';
 
-// 资源路径常量
-const link = 'src/assets/static/index/';
-const sound = 'src/assets/static/sound/';
+// 资源路径 — 用 import.meta.glob 让 Vite 处理构建时路径
+const indexImgFiles = import.meta.glob('../assets/static/index/*.png', { eager: true, query: '?url', import: 'default' });
+const soundFiles = import.meta.glob('../assets/static/sound/*.ogg', { eager: true, query: '?url', import: 'default' });
+const indexImg = (name) => indexImgFiles[`../assets/static/index/${name}`];
+const soundUrl = (name) => soundFiles[`../assets/static/sound/${name}`];
 
 // 路由和状态管理
 const router = useRouter();
@@ -99,16 +101,16 @@ const ch4Style = ref({ top: '20px', left: '950px', width: '800px', height: 'auto
 
 // 按钮资源
 const baseImages = [
-    link + '2285.png', link + '2282.png', link + '2279.png',
-    link + '2276.png', link + '2273.png', link + '2270.png'
+    indexImg('2285.png'), indexImg('2282.png'), indexImg('2279.png'),
+    indexImg('2276.png'), indexImg('2273.png'), indexImg('2270.png')
 ];
 const hoverImages = [
-    link + '2052.png', link + '2073.png', link + '2087.png',
-    link + '2101.png', link + '2155.png', link + '2169.png'
+    indexImg('2052.png'), indexImg('2073.png'), indexImg('2087.png'),
+    indexImg('2101.png'), indexImg('2155.png'), indexImg('2169.png')
 ];
 const activeImages = [
-    link + '2059.png', link + '2066.png', link + '2080.png',
-    link + '2094.png', link + '2148.png', link + '2162.png'
+    indexImg('2059.png'), indexImg('2066.png'), indexImg('2080.png'),
+    indexImg('2094.png'), indexImg('2148.png'), indexImg('2162.png')
 ];
 
 // 按钮样式映射
@@ -136,7 +138,7 @@ const handleButtonClick = (index) => {
 
 // 路由跳转
 const goToLoaddata = () => {
-    eventBus.$emit('set-voice', sound + 'load.ogg');
+    eventBus.$emit('set-voice', soundUrl('load.ogg'));
     router.push({ name: 'Loaddata' });
 };
 
@@ -146,7 +148,7 @@ const goToDialog = () => {
 
 // 按钮交互方法
 const handleMouseOver = (index) => {
-    eventBus.$emit('set-sound1', sound + 'buttonhover.ogg');
+    eventBus.$emit('set-sound1', soundUrl('buttonhover.ogg'));
     if (index !== selectedIndex.value) {
         hoveredIndex.value = index;
     }
@@ -159,7 +161,7 @@ const handleMouseOut = (index) => {
 };
 
 const handleMouseDown = (index) => {
-    eventBus.$emit('set-sound2', sound + 'buttonclick.ogg');
+    eventBus.$emit('set-sound2', soundUrl('buttonclick.ogg'));
     selectedIndex.value = index;
 };
 
@@ -180,8 +182,8 @@ const toggle = () => {
     op_load.value++;
     if (op_load.value === 1) {
         op_play.value = true;
-        setTimeout(() => eventBus.$emit('set-voice', sound + 'yuzu.ogg'), 2800);
-        setTimeout(() => eventBus.$emit('set-bgm', sound + 'SongOp.ogg'), 8600);
+        setTimeout(() => eventBus.$emit('set-voice', soundUrl('yuzu.ogg')), 2800);
+        setTimeout(() => eventBus.$emit('set-bgm', soundUrl('SongOp.ogg')), 8600);
         setTimeout(() => isAnimating2.value = true, 2000);
     } else if (op_load.value === 2) {
         triggerOverlayAnimation();
@@ -194,7 +196,7 @@ const triggerOverlayAnimation = () => {
     setTimeout(() => {
         isAnimating1.value = true;
         setTimeout(() => op_show.value = false, 700);
-        setTimeout(() => eventBus.$emit('set-voice', sound + 'serenbanka.ogg'), 400);
+        setTimeout(() => eventBus.$emit('set-voice', soundUrl('serenbanka.ogg')), 400);
         setTimeout(() => {
             showOverlay.value = false;
             isAnimating1.value = false;

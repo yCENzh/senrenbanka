@@ -178,12 +178,11 @@ const { DialogItems } = storeToRefs(dataStore);
 const { GlobeTransmitItems } = storeToRefs(dataStore);
 const { JumpItems } = storeToRefs(dataStore);
 
-// ========== 常量定义 ==========
-const ASSET_PATHS = {
-  DIALOG: 'src/assets/static/dialog/',
-  SOUND: 'src/assets/static/sound/',
-  BGM: 'src/assets/static/bgm/'
-};
+// ========== 资源路径 — import.meta.glob ==========
+const dialogImgFiles = import.meta.glob('../assets/static/dialog/**/*.{png,jpg}', { eager: true, query: '?url', import: 'default' });
+const soundFiles = import.meta.glob('../assets/static/sound/*.ogg', { eager: true, query: '?url', import: 'default' });
+const dialogImg = (path) => dialogImgFiles[`../assets/static/dialog/${path}`];
+const soundUrl = (name) => soundFiles[`../assets/static/sound/${name}`];
 
 const BGM_URLS = {
   '01': 'https://cnb.cool/ciallo.ciallo/senrenbanka/-/releases/download/resources/BGM01.wav',
@@ -335,9 +334,9 @@ const dialogAvatarFace = computed(() => {
 });
 
 // ========== 资源列表 ==========
-const baseImages = Array.from({ length: 21 }, (_, i) => ASSET_PATHS.DIALOG + `baseImages/${i + 1}.png`);
-const hoverImages = Array.from({ length: 21 }, (_, i) => ASSET_PATHS.DIALOG + `hoverImages/${i + 1}.png`);
-const activeImages = Array.from({ length: 21 }, (_, i) => ASSET_PATHS.DIALOG + `activeImages/${i + 1}.png`);
+const baseImages = Array.from({ length: 21 }, (_, i) => dialogImg(`baseImages/${i + 1}.png`));
+const hoverImages = Array.from({ length: 21 }, (_, i) => dialogImg(`hoverImages/${i + 1}.png`));
+const activeImages = Array.from({ length: 21 }, (_, i) => dialogImg(`activeImages/${i + 1}.png`));
 
 // ========== 生命周期钩子 ==========
 onMounted(async () => {
@@ -365,7 +364,7 @@ onMounted(async () => {
       
       // 播放初始语音
       if (initialDialog.voice) {
-        eventBus.$emit('set-voice', ASSET_PATHS.SOUND + initialDialog.voice + '.ogg');
+        eventBus.$emit('set-voice', soundUrl(initialDialog.voice + '.ogg'));
       }
       
       // 添加到已读列表
@@ -419,7 +418,7 @@ watch(showReadLog, (val) => {
   if (!val) {
     window.removeEventListener('wheel', handleWheel);
   } else {
-    eventBus.$emit('set-voice', ASSET_PATHS.SOUND + 'backlog.ogg');
+    eventBus.$emit('set-voice', soundUrl('backlog.ogg'));
     nextTick(() => {
       if (logList.value) {
         const { scrollHeight, clientHeight } = logList.value;
@@ -466,7 +465,7 @@ const handleMainWheel = (event) => {
   if (!isDialogVisible.value) return;
 
   if (event.deltaY < 0) {
-    eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + '切替2.ogg');
+    eventBus.$emit('set-sound2', soundUrl('切替2.ogg'));
     isDialogVisible.value = false;
     showReadLog.value = true;
     setTimeout(() => {
@@ -506,7 +505,7 @@ const handleClick = (index) => {
   // 18为"重放当前音频"按钮，无音效
   if (index !== 18) {
     const soundFile = FUNCTION_SOUND_PATHS[index] || 'buttonclick.ogg';
-    eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + soundFile);
+    eventBus.$emit('set-sound2', soundUrl(soundFile));
   }
 
   switch (index) {
@@ -514,12 +513,12 @@ const handleClick = (index) => {
       isButtonBarFixed.value = !isButtonBarFixed.value;
       break;
     case 2: // 保存
-      eventBus.$emit('set-voice', ASSET_PATHS.SOUND + 'save.ogg');
+      eventBus.$emit('set-voice', soundUrl('save.ogg'));
       GlobeTransmitItems.value[0].isInDialog = 1;
       router.push({ name: 'Savedata' });
       break;
     case 3: // 加载
-      eventBus.$emit('set-voice', ASSET_PATHS.SOUND + 'load.ogg');
+      eventBus.$emit('set-voice', soundUrl('load.ogg'));
       GlobeTransmitItems.value[0].isInDialog = 1;
       router.push({ name: 'Loaddata' });
       break;
@@ -542,7 +541,7 @@ const handleClick = (index) => {
       break;
     case 18: // 重放当前音频
       if (currentDialog.value && currentDialog.value.voice) {
-        eventBus.$emit('set-voice', ASSET_PATHS.SOUND + currentDialog.value.voice + '.ogg');
+        eventBus.$emit('set-voice', soundUrl(currentDialog.value.voice + '.ogg'));
       }
       break;
     case 20: // 隐藏界面
@@ -653,7 +652,7 @@ const handleWheel = (event) => {
   const maxScroll = scrollHeight - clientHeight;
 
   if (direction > 0 && Math.abs(scrollTop - maxScroll) < 2) {
-    eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + 'buttonreturn.ogg');
+    eventBus.$emit('set-sound2', soundUrl('buttonreturn.ogg'));
     showReadLog.value = false;
     isDialogVisible.value = true;
     return;
@@ -831,7 +830,7 @@ const handleBGM = (musicId) => {
   
   // 播放新的BGM
   if (musicId) {
-    const bgmUrl = BGM_URLS[musicId] || (ASSET_PATHS.BGM + 'BGM' + musicId + '.wav');
+    const bgmUrl = BGM_URLS[musicId];
     console.log('Playing new BGM:', bgmUrl);
     eventBus.$emit('set-bgm', bgmUrl);
   }
@@ -868,7 +867,7 @@ const handleDialogChange = (newPlotId) => {
 
           // ========== 剧情切换音效 ==========
           if (dialog.sound) {
-            eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + dialog.sound);
+            eventBus.$emit('set-sound2', soundUrl(dialog.sound));
           }
 
           // 处理BGM切换 - 确保在状态更新后调用
@@ -877,7 +876,7 @@ const handleDialogChange = (newPlotId) => {
           });
 
           if (dialog.voice) {
-            eventBus.$emit('set-voice', ASSET_PATHS.SOUND + dialog.voice + '.ogg');
+            eventBus.$emit('set-voice', soundUrl(dialog.voice + '.ogg'));
           }
 
           // 启动打字机效果
@@ -904,7 +903,7 @@ const handleDialogChange = (newPlotId) => {
       });
 
       if (dialog.voice) {
-        eventBus.$emit('set-voice', ASSET_PATHS.SOUND + dialog.voice + '.ogg');
+        eventBus.$emit('set-voice', soundUrl(dialog.voice + '.ogg'));
       }
       
       // 启动打字机效果
@@ -1027,32 +1026,32 @@ const rightCharacterKey = computed(() => `${rightCharacter.value || ''}_${rightP
 
 // 在<script setup>中添加事件处理函数
 const handleBackBtnHover = () => {
-  eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + 'buttonhover.ogg');
+  eventBus.$emit('set-sound2', soundUrl('buttonhover.ogg'));
 };
 const handleBackBtnClick = () => {
-  eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + 'buttonreturn.ogg');
+  eventBus.$emit('set-sound2', soundUrl('buttonreturn.ogg'));
   showReadLog.value = false;
   isDialogVisible.value = true;
 };
 
 const handleScrollBtnHover = () => {
-  eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + 'buttonhover.ogg');
+  eventBus.$emit('set-sound2', soundUrl('buttonhover.ogg'));
 };
 const handleScrollBtnClick = (dir) => {
-  eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + '切替1.ogg');
+  eventBus.$emit('set-sound2', soundUrl('切替1.ogg'));
   handleScrollBtn(dir);
 };
 
 const handleOptionHover = () => {
-  eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + 'buttonhover.ogg');
+  eventBus.$emit('set-sound2', soundUrl('buttonhover.ogg'));
 };
 const handleOptionClick = (idx) => {
-  eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + '决定1.ogg');
+  eventBus.$emit('set-sound2', soundUrl('决定1.ogg'));
   optionClick(idx);
 };
 
 const handleReadLogItemHover = () => {
-  eventBus.$emit('set-sound2', ASSET_PATHS.SOUND + 'buttonhover.ogg');
+  eventBus.$emit('set-sound2', soundUrl('buttonhover.ogg'));
 };
 
 const router = useRouter();
