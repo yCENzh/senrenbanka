@@ -1,7 +1,7 @@
 <template>
     <div id="save-main">
-        <img src="../assets/static/Loaddata/70114.png" id="bg-savedata-image1">
-        <img src="../assets/static/Loaddata/70112.png" id="bg-savedata-image2">
+        <img src="../assets/static/loaddata/70114.png" id="bg-savedata-image1">
+        <img src="../assets/static/loaddata/70112.png" id="bg-savedata-image2">
         <div id="main-app">
             <div id="content-overlay">
                 <input type="range" class="custom-slider" id="customSlider" min="0" max="29" v-model.number="PageValue"
@@ -45,8 +45,8 @@
                         @mouseout="handleMouseOut(11)" @click="handleClick2(11)">
                 </div>
                 <div id="savedata-setting4">
-                    <img src="../assets/static/Loaddata/28191.png">
-                    <img src="../assets/static/Loaddata/28161.png" style="margin-left: 10%;">
+                    <img src="../assets/static/loaddata/28191.png">
+                    <img src="../assets/static/loaddata/28161.png" style="margin-left: 10%;">
                 </div>
                 <div class="data-container" @wheel="handleWheel">
                     <div id="data-grid" :style="{ transform: `translateY(-${PageValue * 23}vh)` }">

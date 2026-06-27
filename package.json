@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "pnpm --filter serenbanka dev",
     "build": "pnpm --filter serenbanka build",
-    "deploy": "pnpm build && wrangler deploy"
+    "deploy": "pnpm build && npx wrangler deploy --config client/serenbanka/dist/senrenbanka/wrangler.json"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
