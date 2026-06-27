@@ -16,7 +16,7 @@
   "migrations": [
     {
       "tag": "v1",
-      "new_classes": ["SaveManager"]
+      "new_sqlite_classes": ["SaveManager"]
     }
   ]
 }
