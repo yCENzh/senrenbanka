@@ -181,8 +181,10 @@ const { JumpItems } = storeToRefs(dataStore);
 // ========== 资源路径 — import.meta.glob ==========
 const dialogImgFiles = import.meta.glob('../assets/static/dialog/**/*.{png,jpg}', { eager: true, query: '?url', import: 'default' });
 const soundFiles = import.meta.glob('../assets/static/sound/*.ogg', { eager: true, query: '?url', import: 'default' });
+const bgimageFiles = import.meta.glob('../assets/static/bgimage/*.png', { eager: true, query: '?url', import: 'default' });
 const dialogImg = (path) => dialogImgFiles[`../assets/static/dialog/${path}`];
 const soundUrl = (name) => soundFiles[`../assets/static/sound/${name}`];
+const bgUrl = (name) => bgimageFiles[`../assets/static/bgimage/${name}`];
 
 const BGM_URLS = {
   '01': 'https://cnb.cool/ciallo.ciallo/senrenbanka/-/releases/download/resources/BGM01.wav',
@@ -255,7 +257,7 @@ const currentDialogName = computed(() => {
 // 背景图片
 const backgroundImage = computed(() => {
   const bgName = currentDialog.value && currentDialog.value.background ? currentDialog.value.background : '街_绿植A.png';
-  return `/src/assets/static/bgimage/${bgName}`;
+  return bgUrl(bgName);
 });
 
 // 选项跳转
@@ -525,8 +527,8 @@ const handleClick = (index) => {
     case 6: // 系统
       GlobeTransmitItems.value[0].isInDialog = 0;
       GlobeTransmitItems.value[0].isOpShow = false;
-      setTimeout(() => eventBus.$emit('set-voice', 'src/assets/static/sound/serenbanka.ogg'), 400);
-      setTimeout(() => eventBus.$emit('set-bgm', 'src/assets/static/sound/SongOp.ogg'), 400);
+      setTimeout(() => eventBus.$emit('set-voice', soundUrl('serenbanka.ogg')), 400);
+      setTimeout(() => eventBus.$emit('set-bgm', soundUrl('SongOp.ogg')), 400);
       router.push({ name: 'Index' });
       break;
     case 10: // 上一句

@@ -56,7 +56,7 @@
                                 class="savedata-block" @mouseover="dataMouseHover(index)"
                                 @mouseout="dataMouseOut(index)" @click="dataClick(index)"
                                 :style="{ 'pointer-events': (item.dataShow || (!twoClick && !isMode3or4)) ? 'auto' : 'none' }">
-                            <img :src="'src/assets/static/bgimage/' + item.background" class="data-backgroundImage"
+                            <img :src="bgUrl(item.background)" class="data-backgroundImage"
                                 v-show="item.dataShow">
                             <div class="data-showID"
                                 :style="{ color: item.isHover && (item.dataShow || (!twoClick && !isMode3or4)) ? '#FEFEFE' : '#AA8A68' }">
@@ -76,7 +76,7 @@
                 </div>
                 <transition name="text-fade-in-out">
                     <div class="detail" v-if="detailitem.detailShow">
-                        <img :src="'src/assets/static/bgimage/' + detailitem.detailImg" class="detail-background">
+                        <img :src="bgUrl(detailitem.detailImg)" class="detail-background">
                         <div class="detail-date">{{ $formatDate(detailitem.detailTime, 'YYYY/MM/DD HH:mm') }}</div>
                         <div class="detail-chapter">{{ detailitem.detailChapter }}</div>
                         <div class="detail-comment">「{{ detailitem.detailComment }}」</div>
@@ -145,8 +145,14 @@ import eventBus from '../components/event-bus.js';
 import { useDataStore, postData } from '../components/dataStore.js';
 
 const dataStore = useDataStore();
-const link1 = 'src/assets/static/savedata/';
-const sound = 'src/assets/static/sound/'
+
+// 资源路径 — import.meta.glob
+const savedataImgFiles = import.meta.glob('../assets/static/savedata/*.png', { eager: true, query: '?url', import: 'default' });
+const soundFiles = import.meta.glob('../assets/static/sound/*.ogg', { eager: true, query: '?url', import: 'default' });
+const savedataImg = (name) => savedataImgFiles[`../assets/static/savedata/${name}`];
+const soundUrl = (name) => soundFiles[`../assets/static/sound/${name}`];
+const bgimageFiles = import.meta.glob('../assets/static/bgimage/*.png', { eager: true, query: '?url', import: 'default' });
+const bgUrl = (name) => bgimageFiles[`../assets/static/bgimage/${name}`];
 //路由设置
 const router = useRouter();
 const { GlobeTransmitItems } = storeToRefs(dataStore);
@@ -245,8 +251,8 @@ const items = computed(() => {
         comment: itemData.comment,
         timestamp: itemData.timestamp,
         chapter: itemData.chapter,
-        defaultImage: 'src/assets/static/savedata/70725.png',
-        hoverImage: 'src/assets/static/savedata/70702.png',
+        defaultImage: savedataImg('70725.png'),
+        hoverImage: savedataImg('70702.png'),
         isHover: hoverStates.value[index] || clickStates.value[index] || false  //三元表达式，点击或选定态
     }))
 })
