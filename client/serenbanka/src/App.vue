@@ -1,7 +1,7 @@
 <template>
   <div class="full-screen-cursor">
- 
-      <router-view v-slot="{ Component }">
+
+      <router-view v-if="!loading" v-slot="{ Component }">
         <transition name="app-fade">
           <component :is="Component"></component>
         </transition>
@@ -16,23 +16,22 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useDataStore, useAudioStore } from '../src/components/dataStore.js';
-
-
+import { useDataStore, useAudioStore } from './components/dataStore.js';
 
 const dataStore = useDataStore();
 const audioStore = useAudioStore();
-
+const loading = ref(true);
 
 onMounted(async () => {
   try {
-    await dataStore.fetchSaveItems(); // 应用启动时预加载数据
-    await dataStore.fetchDialogItems(); // 应用启动时预加载数据
-    await dataStore.fetchJumpItems(); // 应用启动时预加载数据
-    console.log(dataStore.GlobeTransmitItems)
+    await dataStore.fetchSaveItems();
+    await dataStore.fetchDialogItems();
+    await dataStore.fetchJumpItems();
+    console.log(dataStore.GlobeTransmitItems);
   } catch (error) {
     console.error('数据加载失败:', error);
-
+  } finally {
+    loading.value = false;
   }
 });
 
@@ -43,18 +42,10 @@ const audio3Ref = ref(null);
 const audio4Ref = ref(null);
 
 onMounted(() => {
-  // 将DOM元素的ref赋值给store中的对应属性
   audioStore.audio1 = audio1Ref.value;
   audioStore.audio2 = audio2Ref.value;
   audioStore.audio3 = audio3Ref.value;
   audioStore.audio4 = audio4Ref.value;
-
-  console.log('音频引用已初始化:', {
-    audio1: audioStore.audio1,
-    audio2: audioStore.audio2,
-    audio3: audioStore.audio3,
-    audio4: audioStore.audio4
-  });
 });
 </script>
 

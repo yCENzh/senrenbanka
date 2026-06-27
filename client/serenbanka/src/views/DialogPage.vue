@@ -350,15 +350,10 @@ onMounted(async () => {
   if (GlobeTransmitItems.value[0] && DialogItems.value.length > 0) {
     const currentPlotId = GlobeTransmitItems.value[0].currentPlotId;
     const initialDialog = DialogItems.value.find(item => item.plot_id === currentPlotId);
-    GlobeTransmitItems.value[0].currentBackground = initialDialog.background;
-    GlobeTransmitItems.value[0].currentChapter = initialDialog.chapter;
-    
-    console.log('Initializing with dialog:', {
-      plotId: currentPlotId,
-      music: initialDialog?.music
-    });
-    
+
     if (initialDialog) {
+      GlobeTransmitItems.value[0].currentBackground = initialDialog.background;
+      GlobeTransmitItems.value[0].currentChapter = initialDialog.chapter;
       // 设置初始BGM
       nextTick(() => {
         handleBGM(initialDialog.music);

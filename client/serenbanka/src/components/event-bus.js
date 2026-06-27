@@ -6,6 +6,15 @@ const eventBus = {
       }
       this.events[eventName].push(callback);
     },
+    $off(eventName, callback) {
+      const callbacks = this.events[eventName];
+      if (!callbacks) return;
+      if (!callback) {
+        delete this.events[eventName];
+        return;
+      }
+      this.events[eventName] = callbacks.filter(cb => cb !== callback);
+    },
     $emit(eventName, ...args) {
       const callbacks = this.events[eventName];
       if (callbacks && callbacks.length > 0) {

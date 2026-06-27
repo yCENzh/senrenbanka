@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, nextTick } from 'vue';
 import eventBus from '/src/components/event-bus.js';
 
 
@@ -201,54 +201,46 @@ export const useAudioStore = defineStore('audio', () => {
     }
   };
 
-  // 初始化事件监听
-  onMounted(() => {
-    // 音效1处理
-    eventBus.$on('set-sound1', async (params) => {
-      sound1.value = params;
-      await nextTick();
-      audio1.value?.play().catch(err => {
-        console.error('播放失败:', err);
-      });
+  // 初始化事件监听（store 是单例，直接注册即可）
+  eventBus.$on('set-sound1', async (params) => {
+    sound1.value = params;
+    await nextTick();
+    audio1.value?.play().catch(err => {
+      console.error('播放失败:', err);
     });
+  });
 
-    // 音效2处理
-    eventBus.$on('set-sound2', async (params) => {
-      sound2.value = params;
-      await nextTick();
-      audio2.value?.play().catch(err => {
-        console.error('播放失败:', err);
-      });
+  eventBus.$on('set-sound2', async (params) => {
+    sound2.value = params;
+    await nextTick();
+    audio2.value?.play().catch(err => {
+      console.error('播放失败:', err);
     });
+  });
 
-    // 语音处理
-    eventBus.$on('set-voice', async (params) => {
-      voice.value = params;
-      await nextTick();
-      audio3.value?.play().catch(err => {
-        console.error('播放失败:', err);
-      });
+  eventBus.$on('set-voice', async (params) => {
+    voice.value = params;
+    await nextTick();
+    audio3.value?.play().catch(err => {
+      console.error('播放失败:', err);
     });
+  });
 
-    // 背景音乐处理 - 带淡入淡出效果
-    eventBus.$on('set-bgm', async (params) => {
-      if(bgm.value===params) return null;
-      await fadeOutBGM();
-      bgm.value = params;
-      await nextTick();
-      await fadeInBGM();
-    });
+  eventBus.$on('set-bgm', async (params) => {
+    if(bgm.value===params) return null;
+    await fadeOutBGM();
+    bgm.value = params;
+    await nextTick();
+    await fadeInBGM();
+  });
 
-    // 音量控制处理
-    eventBus.$on('set-volume', (volume) => {
-      console.log('设置音量:', volume);
-      currentVolume.value = volume; // 这里会自动限制在 0-1 之间
-      // 设置所有音频元素的音量
-      setAudioVolume(audio1, currentVolume.value);
-      setAudioVolume(audio2, currentVolume.value);
-      setAudioVolume(audio3, currentVolume.value);
-      setAudioVolume(audio4, currentVolume.value);
-    });
+  eventBus.$on('set-volume', (volume) => {
+    console.log('设置音量:', volume);
+    currentVolume.value = volume;
+    setAudioVolume(audio1, currentVolume.value);
+    setAudioVolume(audio2, currentVolume.value);
+    setAudioVolume(audio3, currentVolume.value);
+    setAudioVolume(audio4, currentVolume.value);
   });
 
   return {
