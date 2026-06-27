@@ -4,9 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "cd client/serenbanka && npm run dev",
-    "build": "cd client/serenbanka && npm run build",
-    "deploy": "cd client/serenbanka && npm run build && cd ../.. && wrangler deploy"
+    "dev": "pnpm --filter serenbanka dev",
+    "build": "pnpm --filter serenbanka build",
+    "deploy": "pnpm build && wrangler deploy"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

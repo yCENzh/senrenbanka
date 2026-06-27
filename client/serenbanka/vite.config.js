@@ -5,7 +5,7 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [cloudflare({ configPath: '../../wrangler.toml' }), vue()],
+  plugins: [cloudflare({ configPath: '../../wrangler.json' }), vue()],
   resolve: {
     alias: {
       'vue': 'vue/dist/vue.esm-bundler.js',
